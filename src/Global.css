@@ -5,3 +5,11 @@
     font-size: 1.3em;
     margin: 0.5em;
   }
+
+  ul {
+      list-style-type: none;
+  }
+
+  div {
+    overflow-x: hidden;
+  }

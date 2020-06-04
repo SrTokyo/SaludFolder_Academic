@@ -3,23 +3,27 @@ import { Container, Row, Col } from "react-bootstrap";
 import logo from "../../assets/logo.jpg";
 import { useForm } from "../../functions/useForm";
 import * as APIS from "../../constants/apisUrl";
+import * as ROUTES from "../../constants/routes";
 import Axios from "axios";
 import { Link } from "react-router-dom";
 
-const IntroPage = () => {
+const IntroPage = (props) => {
   const { values, handleChange, handleSubmit } = useForm(login);
 
   async function login() {
-    console.log(values);
     const response = await Axios.post(
       APIS.SALUDFOLDER + "users/login",
       values,
       { headers: { "Content-Type": "application/json" } }
     );
     if (response.status === 200) {
-      localStorage.set("sessionToken", response.token);
-      console.log("Redirigir");
+      console.log(values.email)
+      localStorage.setItem("email", values.email);
+      console.log(localStorage.getItem("email"))
+      localStorage.setItem("sessionToken", "bearer " + response.data.token);
+      props.history.push(ROUTES.HOME);
     } else {
+      console.log("Usuario incorrecto");
     }
   }
 

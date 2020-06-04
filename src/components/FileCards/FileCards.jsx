@@ -1,13 +1,16 @@
 import React from "react";
-import { FileCard } from "../FileCard/FileCard";
+import  FileCard  from "../FileCard/FileCard";
+
 const FileCards = (props) => {
-  const files = props.files;
+
   return (
-    <div>
-      {files.map(() => (
-        <FileCard />
+    <ul className="row">
+      {props.documents.map((document) => (
+        <li className="col-6 col-md-3 pr-0" key={document._id} style={{width:'260px'}}>
+          <FileCard document={document} />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 
