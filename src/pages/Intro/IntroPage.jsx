@@ -62,7 +62,7 @@ const IntroPage = (props) => {
                 className="form-input"
               />
               <div>
-                <button className="btn btn-primary btn-lg mt-5">
+                <button className="btn btn-primary mt-5">
                   Entrar a mi carpeta
                 </button>
               </div>
