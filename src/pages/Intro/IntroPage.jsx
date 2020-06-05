@@ -19,7 +19,6 @@ const IntroPage = (props) => {
     if (response.status === 200) {
       console.log(values.email)
       localStorage.setItem("email", values.email);
-      console.log(localStorage.getItem("email"))
       localStorage.setItem("sessionToken", "bearer " + response.data.token);
       props.history.push(ROUTES.HOME);
     } else {

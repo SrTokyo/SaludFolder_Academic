@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Dropzone from "../DropZone/DropZone";
 import Progress from "../Progress/Progress";
+import * as APIS from "../../constants/apisUrl";
 import fileIcon from "../../assets/file-icon.png";
+import Axios from "axios";
 
 import "./Upload.css";
 
@@ -26,22 +28,36 @@ class Upload extends Component {
       file: file[0],
     });
     console.log(this.state.file);
+    console.log(localStorage.getItem('user'))
   }
 
   async uploadFiles() {
     this.setState({ uploadProgress: {}, uploading: true });
-    const promises = [];
+    const form = new FormData();
+    form.set("foo", this.state.file);
+    Axios.post(APIS.SALUDFOLDER + "documentos", form, {
+      headers: { Authorization: localStorage.getItem("sessionToken") },
+    })
+      .then((res) => {
+        console.log(res);
+        // const data = {'owner_id'}
+        // Axios.patch(
+        //   APIS.SALUDFOLDER + "documentos/" + res.data.newDocumento._id
+        // );
+      })
+      .catch((err) => console.log(err));
+    // const promises = [];
     // this.state.file.forEach((file) => {
     //   promises.push(this.sendRequest(file));
     // });
-    try {
-      await Promise.all(promises);
+    // try {
+    //   await Promise.all(promises);
 
-      this.setState({ successfullUploaded: true, uploading: false });
-    } catch (e) {
-      // Not Production ready! Do some error handling here instead...
-      this.setState({ successfullUploaded: true, uploading: false });
-    }
+    //   this.setState({ successfullUploaded: true, uploading: false });
+    // } catch (e) {
+    // Not Production ready! Do some error handling here instead...
+    //   this.setState({ successfullUploaded: true, uploading: false });
+    // }
   }
 
   sendRequest(file) {
@@ -136,14 +152,14 @@ class Upload extends Component {
         {this.state.file && (
           <div className="Filename">
             <img src={fileIcon} alt="Icono de archivo" className="Image" />
-            
-              <p>{this.state.file.name}</p>
+
+            <p>{this.state.file.name}</p>
             {this.renderProgress(this.state.file)}
           </div>
         )}
         <div className="Name">
           <h5>Nombre del archivo:</h5>
-          <input type="text" className="form-input Input" />
+          <input required type="text" className="form-input Input" />
         </div>
         <div className="Actions">{this.renderActions()}</div>
       </div>
