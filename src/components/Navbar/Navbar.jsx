@@ -1,13 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
+import { createHashHistory } from 'history'
 
 import "./Navbar.css";
+
+export const history = createHashHistory()
 
 const Navbar = (props) => {
   const handleSignOut = () => {
     localStorage.removeItem("sessionToken");
-    props.history.push(ROUTES.INTRO);
+    history.push(ROUTES.INTRO)
+    
   };
   return (
     <div className="Navbar">

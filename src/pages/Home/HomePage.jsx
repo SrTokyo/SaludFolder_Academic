@@ -16,8 +16,7 @@ const HomePage = () => {
         APIS.SALUDFOLDER + "users/email/" + email
       );
       if (response.status === 200) {
-        console.log(response.data)
-        localStorage.setItem("user", JSON.stringify(response.data));
+        localStorage.setItem("user", response.data);  //Es AQUIIIIIIII
         await Axios.get(
           APIS.SALUDFOLDER + "documentos/owner_id/" + response.data._id
         )

@@ -15,20 +15,20 @@ class Upload extends Component {
       uploading: false,
       uploadProgress: {},
       successfullUploaded: false,
+      name: "",
     };
 
     this.onFilesAdded = this.onFilesAdded.bind(this);
     this.uploadFiles = this.uploadFiles.bind(this);
     this.sendRequest = this.sendRequest.bind(this);
     this.renderActions = this.renderActions.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   async onFilesAdded(file) {
     await this.setState({
       file: file[0],
     });
-    console.log(this.state.file);
-    console.log(localStorage.getItem('user'))
   }
 
   async uploadFiles() {
@@ -39,13 +39,37 @@ class Upload extends Component {
       headers: { Authorization: localStorage.getItem("sessionToken") },
     })
       .then((res) => {
-        console.log(res);
-        // const data = {'owner_id'}
-        // Axios.patch(
-        //   APIS.SALUDFOLDER + "documentos/" + res.data.newDocumento._id
-        // );
+        var user = localStorage.getItem("user");
+        const data = [
+          { propName: "owner_id", value: user._id },
+          { propName: "titulo", value: this.state.name },
+        ];
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("sessionToken"),
+        };
+        Axios.patch(
+          APIS.SALUDFOLDER + "documentos/" + res.data.newDocumento._id,
+          data,
+          { headers: headers }
+        )
+          .then((res2) => {
+            const email = [{ email: user.email }];
+            Axios.patch(
+              APIS.SALUDFOLDER + "users/addDoc/" + res.data.newDocumento._id,
+              email,
+              { headers: headers }
+            )
+              .then((res3) => {
+                console.log(res3);
+                this.setState({ successfullUploaded: true, uploading: true });
+              })
+          })
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        this.setState({ successfullUploaded: false, uploading: false });
+      });
     // const promises = [];
     // this.state.file.forEach((file) => {
     //   promises.push(this.sendRequest(file));
@@ -131,13 +155,19 @@ class Upload extends Component {
     } else {
       return (
         <button
-          disabled={!this.state.file || this.state.uploading}
+          disabled={
+            !this.state.file || this.state.uploading || this.state.name === ""
+          }
           onClick={this.uploadFiles}
         >
           Upload
         </button>
       );
     }
+  }
+
+  handleChange(event) {
+    this.setState({ name: event.target.value });
   }
 
   render() {
@@ -150,16 +180,24 @@ class Upload extends Component {
           />
         </div>
         {this.state.file && (
-          <div className="Filename">
-            <img src={fileIcon} alt="Icono de archivo" className="Image" />
+          <div className="w-100">
+            <div className="Filename">
+              <img src={fileIcon} alt="Icono de archivo" className="Image" />
 
-            <p>{this.state.file.name}</p>
+              <p>{this.state.file.name}</p>
+            </div>
             {this.renderProgress(this.state.file)}
           </div>
         )}
         <div className="Name">
           <h5>Nombre del archivo:</h5>
-          <input required type="text" className="form-input Input" />
+          <input
+            required
+            type="text"
+            value={this.state.name}
+            onChange={this.handleChange}
+            className="form-input Input"
+          />
         </div>
         <div className="Actions">{this.renderActions()}</div>
       </div>
